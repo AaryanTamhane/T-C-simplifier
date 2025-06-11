@@ -1,36 +1,99 @@
-Initial problem statement:
-make a text summarizer for user terms and condition popups that occur on every website. Thinking from an industry level perspective checking condition boxes may not be that easy as by doing that you are officially granting permissions which can cause you to lose lawsuits in courts.
+# 📘 Project Development Journey & Key Thinking Points
 
-End goal is to make a chrome extension. Suppose a person working in a company accesses a particular service that asks for T&C conditions and permissions while signing up for that service, the chrome extension should read and summarize that text in a popup on the same screen without the need of user to copy paste the complete text and then derive a summary. It shouldnt be of hastle to the user and since T&C is hardly read by anyone and just skiped within seconds, the extension must also do it in somewhat similar time
+## 🧠 Critical Thinking Journey
 
-Key problems/figureouts/concepts
+### 1. 🧭 Defining the Problem
 
-1. 🧾 Where Is T&C Text Primarily Written on Websites?
-In most real-world cases, T&C (Terms and Conditions) text is written in standard HTML, but there are variations based on how it's displayed.
-✅ 1. Plain HTML Pages – 🟢 Most Common
-Structure: T&C is written in <div>, <p>, <section>, or <article> tags on a standalone page like:
-✅ Easy to access using document.querySelector or content script
-🟢 Most websites follow this format
+**Initial Problem Statement:**
+Make a text summarizer for user Terms and Condition (T\&C) popups that occur on every website. Thinking from an industry-level perspective, checking condition boxes may not be that easy — by doing that, users officially grant permissions, which can be used against them in lawsuits.
 
-✅ 2. Scroll Boxes on Signup Pages
-Structure: A modal or signup form has a scrollable <div> (with overflow: scroll) containing the entire T&C.
-✅ Still HTML, just not fully visible unless scrolled
-📌 Needs scroll simulation (scrollTop = scrollHeight) before extraction
+**End Goal:**
+Develop a Chrome extension that, when a person visits a website or service requiring acceptance of T\&C, automatically detects, extracts, and summarizes the content. It should be fast, lightweight, and eliminate the need to copy-paste text. Since users tend to skip reading T\&C within seconds, the extension must deliver a summary just as quickly.
 
-Most of the success will come from extracting big HTML blocks with legal language (hundreds of characters, keywords like "privacy", "terms", "agree").
-Your Chrome extension’s content script should prioritize:
-  
-  HTML pages
-  Scrollable boxes
+---
 
-  [User visits a website]
-        ↓
-[Chrome Extension Content Script]
-        ↓ (Auto-detects and extracts T&C text from page)
-        ↓
-[Send Text to Backend → OpenAI GPT API]
-        ↓
-[Receive: Summary + Risk Level + Reason]
-        ↓
-[Display result in a popup inside the extension]
+## 🔍 Key Problems / Concepts / Solutions
 
+### 1. 🧾 Where Is T\&C Text Primarily Written on Websites?
+
+In most real-world cases, T\&C (Terms and Conditions) text is written in standard HTML, with variations:
+
+#### ✅ 1. Plain HTML Pages – 🟢 Most Common
+
+* Structure: T\&C is inside `<div>`, `<p>`, `<section>`, or `<article>` tags on a standalone page.
+* ✅ Easy to access using `document.querySelector` or content script DOM scraping
+* 🟢 Most websites follow this format
+
+#### ✅ 2. Scroll Boxes on Signup Pages
+
+* Structure: A modal or signup form has a scrollable `<div>` with `overflow: scroll`, containing the entire T\&C.
+* ✅ Still HTML, but not fully visible unless scrolled
+* 📌 Needs scroll simulation using JavaScript (`scrollTop = scrollHeight`) before extraction
+
+**Conclusion:**
+Most success comes from extracting large HTML blocks with legal language (keywords like "privacy", "terms", "agree").
+
+📌 Your Chrome Extension content script should prioritize:
+
+* ✅ HTML pages
+* ✅ Scrollable boxes
+
+---
+
+### 2. 📤 Handling Long Text
+
+**Challenge:** Large T\&C content can exceed API token limits
+
+* ✅ Chunked content into small, semantic segments
+* ✅ Used top-N chunk selection via keyword scoring (e.g., risk-related words)
+
+---
+
+### 3. ⚡ Optimizing Speed
+
+**Challenge:** Existing T\&C extensions were slow
+
+* ✅ Preprocessed text before API call
+* ✅ Chose fast LLMs (e.g., GPT-4-turbo, Claude Sonnet)
+
+---
+
+### 4. 🤖 Choosing LLMs vs. Training Models
+
+**Challenge:** Training with a 100-document dataset would overfit
+
+* ✅ Shifted to zero-shot prompting using GPT-4 API for reliability and scalability
+
+---
+
+### 5. 🔒 Privacy Considerations
+
+**Challenge:** How to ensure we don’t extract private or sensitive user data
+
+* ✅ Only extract public visible text from HTML (no inputs, passwords, or hidden elements)
+* ✅ Provide a disclaimer for user transparency
+
+---
+
+### 6. 🎨 UI/UX Design
+
+**Challenge:** Must be non-intrusive yet informative
+
+* ✅ Designed popup with minimal summary and quick risk indicator (color-coded: Green, Yellow, Red)
+
+---
+
+## 🔄 Development Workflow Summary
+
+1. Research problem scope and study alternatives
+2. Choose Chrome Extension as the delivery platform
+3. Extract T\&C data using JS content scripts and DOM traversal
+4. Simulate scrolling if T\&C is in scrollable boxes
+5. Integrate LLM via OpenAI API for zero-shot summarization
+6. Receive and display summary and risk level in popup UI
+7. Optimize for UX and performance
+8. Test on real sites like Instagram, Google, Spotify, etc.
+
+---
+
+> This journey section will continue to grow as the project matures through development milestones, feedback, and testing phases.
