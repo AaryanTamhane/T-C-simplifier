@@ -22,3 +22,15 @@ Your Chrome extension’s content script should prioritize:
   
   HTML pages
   Scrollable boxes
+
+  [User visits a website]
+        ↓
+[Chrome Extension Content Script]
+        ↓ (Auto-detects and extracts T&C text from page)
+        ↓
+[Send Text to Backend → OpenAI GPT API]
+        ↓
+[Receive: Summary + Risk Level + Reason]
+        ↓
+[Display result in a popup inside the extension]
+
